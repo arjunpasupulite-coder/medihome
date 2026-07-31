@@ -1,0 +1,82 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Manage Symptom Mappings - Admin Console - MediHome{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h2 style="font-size: 1.75rem; color: var(--dark);">Symptom to Test Database Mappings</h2>
+        <p style="color: var(--text-secondary);">Manage symptom-to-test frequency weights (Option 2 recommendation database).</p>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
+    <!-- Add Mapping Form -->
+    <div class="glass-card">
+        <h3 style="font-size: 1.1rem; color: var(--dark); margin-bottom: 1rem;">Add Symptom Mapping</h3>
+
+        <form method="POST" action="." class="needs-validation">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label class="form-label">Symptom *</label>
+                <select name="symptom_id" class="form-control" required>
+                    {% for sym in symptoms %}
+                        <option value="{{ sym.id }}">{{ sym.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Mapped Test Name *</label>
+                <input type="text" name="test_name" class="form-control" placeholder="e.g. CBC, Blood Sugar, Dengue RT-PCR" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Frequency Star Weight (1 to 5) *</label>
+                <select name="frequency_weight" class="form-control" required>
+                    <option value="5">★★★★★ (5 Stars - Essential)</option>
+                    <option value="4">★★★★☆ (4 Stars - Recommended)</option>
+                    <option value="3">★★★☆☆ (3 Stars - Moderate)</option>
+                    <option value="2">★★☆☆☆ (2 Stars - Optional)</option>
+                    <option value="1">★☆☆☆☆ (1 Star - Supplemental)</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Add Mapping</button>
+        </form>
+    </div>
+
+    <!-- Mappings Table -->
+    <div class="glass-card">
+        <h3 style="font-size: 1.1rem; color: var(--dark); margin-bottom: 1.25rem;">Active Mappings</h3>
+
+        <div class="table-container">
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>Symptom</th>
+                        <th>Recommended Test</th>
+                        <th>Star Weight</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for map in mappings %}
+                    <tr>
+                        <td><strong>{{ map.symptom.name }}</strong></td>
+                        <td>{{ map.test_name }}</td>
+                        <td><span style="color: #f59e0b; font-size: 1.1rem;">{{ map.star_display }}</span> ({{ map.frequency_weight }}/5)</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                            No symptom mappings created yet.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

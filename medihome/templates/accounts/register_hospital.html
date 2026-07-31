@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block title %}Hospital Registration - MediHome{% endblock %}
+
+{% block content %}
+<div style="max-width: 750px; margin: 2rem auto; padding: 0 1rem;">
+    <div class="glass-card">
+        <div style="background: #e0f2fe; color: #0369a1; padding: 0.85rem 1rem; border-radius: var(--radius-sm); font-size: 0.875rem; margin-bottom: 1.5rem; border: 1px solid #bae6fd;">
+            <strong>Note:</strong> Hospital registrations require Administrator Approval before accepting OP appointments.
+        </div>
+
+        <h2 style="font-size: 1.75rem; color: var(--dark); margin-bottom: 0.5rem;">Hospital Registration</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+            Register your Hospital or Medical Center to manage departments, doctors, and OP consultations.
+        </p>
+
+        <form method="POST" enctype="multipart/form-data" action="." class="needs-validation">
+            {% csrf_token %}
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">Hospital Name *</label>
+                    {{ form.hospital_name }}
+                    {% if form.hospital_name.errors %}<div style="color: #ef4444; font-size: 0.8rem;">{{ form.hospital_name.errors.0 }}</div>{% endif %}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Establishment License No. *</label>
+                    {{ form.license_number }}
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">GST Identification Number *</label>
+                    {{ form.gst_number }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">24/7 Emergency Helpline *</label>
+                    {{ form.emergency_contact }}
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">Portal Admin Username *</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}<div style="color: #ef4444; font-size: 0.8rem;">{{ form.username.errors.0 }}</div>{% endif %}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Hospital Email *</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}<div style="color: #ef4444; font-size: 0.8rem;">{{ form.email.errors.0 }}</div>{% endif %}
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">Password *</label>
+                    {{ form.password }}
+                    {% if form.password.errors %}<div style="color: #ef4444; font-size: 0.8rem;">{{ form.password.errors.0 }}</div>{% endif %}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirm Password *</label>
+                    {{ form.confirm_password }}
+                    {% if form.confirm_password.errors %}<div style="color: #ef4444; font-size: 0.8rem;">{{ form.confirm_password.errors.0 }}</div>{% endif %}
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">Phone Contact *</label>
+                    {{ form.phone_number }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">OPD Working Hours</label>
+                    {{ form.working_hours }}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Hospital Address *</label>
+                {{ form.address }}
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">Latitude Coordinate (Optional)</label>
+                    {{ form.latitude }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Longitude Coordinate (Optional)</label>
+                    {{ form.longitude }}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Hospital Logo</label>
+                {{ form.logo }}
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Submit Hospital Registration</button>
+        </form>
+
+        <div style="margin-top: 1.5rem; text-align: center; font-size: 0.9rem;">
+            Already registered? <a href="{% url 'accounts:login_hospital' %}">Sign In as Hospital</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

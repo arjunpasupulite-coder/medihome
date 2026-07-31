@@ -1,0 +1,80 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Book Diagnostic Tests - MediHome{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h2 style="font-size: 1.75rem; color: var(--dark);">Search Diagnostic Tests</h2>
+        <p style="color: var(--text-secondary);">Option 1: Search and select home sample collection diagnostic tests.</p>
+    </div>
+    <a href="{% url 'patients:symptom_recommendations' %}" class="btn btn-outline">
+        Don't know which test? Use Symptom Recommendation
+    </a>
+</div>
+
+<!-- Search & Category Filters -->
+<div class="glass-card" style="margin-bottom: 2rem; padding: 1.25rem;">
+    <form method="GET" action="." style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <input type="text" name="q" value="{{ query }}" class="form-control" style="flex: 2; min-width: 250px;" placeholder="Search tests (e.g. CBC, HbA1c, Dengue, Thyroid)...">
+        
+        <select name="category" class="form-control" style="flex: 1; min-width: 180px;">
+            <option value="">All Categories</option>
+            {% for cat in categories %}
+                <option value="{{ cat }}" {% if selected_category == cat %}selected{% endif %}>{{ cat }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit" class="btn btn-primary">Search</button>
+        {% if query or selected_category %}
+            <a href="{% url 'patients:diagnostic_search' %}" class="btn btn-outline">Clear</a>
+        {% endif %}
+    </form>
+</div>
+
+<!-- Notice banner for Home Collection compatibility -->
+<div style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; padding: 0.75rem 1rem; border-radius: var(--radius-sm); margin-bottom: 1.5rem; font-size: 0.875rem;">
+    ℹ️ Only tests compatible with <strong>Home Sample Collection</strong> are displayed below. Imaging & specialized procedures (MRI, CT Scan, PET Scan, Ultrasound, X-Ray, Endoscopy, EEG) are excluded.
+</div>
+
+<!-- Test Cards Grid -->
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
+    {% for test in tests %}
+    <div class="glass-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                <span class="badge badge-success">{{ test.category }}</span>
+                <span class="badge badge-info">{{ test.duration_hours }}h Report</span>
+            </div>
+            
+            <h3 style="font-size: 1.2rem; color: var(--dark); margin-bottom: 0.25rem;">{{ test.name }}</h3>
+            <p style="color: var(--primary-hover); font-weight: 600; font-size: 0.9rem; margin-bottom: 0.75rem;">
+                🔬 {{ test.lab.lab_name }}
+            </p>
+
+            {% if test.preparation %}
+            <div style="background: #f8fafc; padding: 0.5rem 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--border); font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                <strong>Prep:</strong> {{ test.preparation }}
+            </div>
+            {% endif %}
+        </div>
+
+        <div style="border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">Price</span>
+                <span style="font-size: 1.35rem; font-weight: 800; color: var(--dark);">₹{{ test.price }}</span>
+            </div>
+            
+            <a href="{% url 'patients:add_to_cart' test.id %}" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
+                + Add to Cart
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="glass-card" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+        <h3 style="color: var(--text-secondary);">No diagnostic tests found.</h3>
+        <p style="color: var(--text-muted);">Try adjusting your search filters or browse by category.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

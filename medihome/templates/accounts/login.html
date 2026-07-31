@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ role_type }} Login - MediHome{% endblock %}
+
+{% block content %}
+<div style="min-height: calc(100vh - 200px); display: flex; align-items: center; justify-content: center; padding: 2rem;">
+    <div class="glass-card" style="max-width: 420px; width: 100%;">
+        <h2 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--dark);">{{ role_type }} Login</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.9rem;">
+            Welcome back to MediHome. Access your portal below.
+        </p>
+
+        <form method="POST" action="." class="needs-validation">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="form-label">Username / Email</label>
+                <input type="text" name="username" class="form-control" placeholder="Enter username" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" name="password" class="form-control" placeholder="Enter password" required>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; font-size: 0.875rem;">
+                <a href="{% url 'accounts:forgot_password' %}">Forgot Password?</a>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
+        </form>
+
+        <div style="margin-top: 1.5rem; text-align: center; font-size: 0.9rem; color: var(--text-secondary);">
+            Don't have an account? 
+            {% if role_code == 'PATIENT' %}
+                <a href="{% url 'accounts:register_patient' %}">Register Patient</a>
+            {% elif role_code == 'DIAGNOSTICIAN' %}
+                <a href="{% url 'accounts:register_diagnostician' %}">Register Lab</a>
+            {% elif role_code == 'HOSPITAL' %}
+                <a href="{% url 'accounts:register_hospital' %}">Register Hospital</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

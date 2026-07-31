@@ -1,0 +1,79 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Hospital Revenue Analytics - MediHome{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h2 style="font-size: 1.75rem; color: var(--dark);">Hospital OPD Revenue Analytics</h2>
+        <p style="color: var(--text-secondary);">Track daily, weekly, monthly OP consultation revenue and top doctors.</p>
+    </div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">💵</div>
+        <div class="stat-info">
+            <h4>Today's OPD Revenue</h4>
+            <div class="value">₹{{ daily_revenue }}</div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">📅</div>
+        <div class="stat-info">
+            <h4>This Week</h4>
+            <div class="value">₹{{ weekly_revenue }}</div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">📈</div>
+        <div class="stat-info">
+            <h4>This Month</h4>
+            <div class="value">₹{{ monthly_revenue }}</div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">🏆</div>
+        <div class="stat-info">
+            <h4>Total Revenue</h4>
+            <div class="value">₹{{ total_revenue }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="glass-card">
+    <h3 style="font-size: 1.25rem; color: var(--dark); margin-bottom: 1.25rem;">Most Popular Specialist Doctors</h3>
+
+    <div class="table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Doctor Name</th>
+                    <th>Department</th>
+                    <th>Appointments Booked</th>
+                    <th>Gross Consultation Fee</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for doc in popular_doctors %}
+                <tr>
+                    <td><strong>Dr. {{ doc.doctor__name }}</strong></td>
+                    <td><span class="badge badge-info">{{ doc.doctor__department__name }}</span></td>
+                    <td>{{ doc.op_count }} Consultations</td>
+                    <td><strong style="color: var(--primary-hover);">₹{{ doc.total_revenue }}</strong></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                        No OP booking revenue records available yet.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,94 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Telemedicine Consultation Room - MediHome{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h2 style="font-size: 1.75rem; color: var(--dark);">Telemedicine Consultation Room</h2>
+        <p style="color: var(--text-secondary);">Room ID: <code>{{ consultation.video_room_id }}</code> | Doctor: Dr. {{ consultation.doctor.name }}</p>
+    </div>
+    <span class="badge badge-success" style="font-size: 0.9rem; padding: 0.5rem 1rem;">Live Room Active</span>
+</div>
+
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+    <!-- Left Video Placeholder & Prescription Form -->
+    <div>
+        <!-- Video Call Placeholder Box -->
+        <div style="background: #0f172a; border-radius: var(--radius-md); height: 380px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--white); margin-bottom: 1.5rem; position: relative; box-shadow: var(--shadow-lg);">
+            <div style="width: 80px; height: 80px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin-bottom: 1rem;">
+                📹
+            </div>
+            <h3 style="font-size: 1.25rem; margin-bottom: 0.25rem; color: var(--white);">Encrypted Video Consultation Stream</h3>
+            <p style="color: #94a3b8; font-size: 0.9rem;">Connecting Patient {{ consultation.patient.username }} with Dr. {{ consultation.doctor.name }}</p>
+            
+            <div style="position: absolute; bottom: 1.25rem; display: flex; gap: 1rem;">
+                <button class="btn btn-outline" style="color: white; border-color: white; padding: 0.5rem 1rem;">🎙️ Mute Mic</button>
+                <button class="btn btn-outline" style="color: white; border-color: white; padding: 0.5rem 1rem;">📷 Toggle Camera</button>
+                <button class="btn btn-primary" style="background: #ef4444; border: none; padding: 0.5rem 1rem;">📞 End Call</button>
+            </div>
+        </div>
+
+        <!-- Doctor Consultation Notes & Prescription Upload Form -->
+        <div class="glass-card">
+            <h3 style="font-size: 1.1rem; color: var(--dark); margin-bottom: 1rem;">Consultation Notes & Digital Prescription</h3>
+
+            <form method="POST" enctype="multipart/form-data" action="{% url 'telemedicine:upload_prescription' consultation.id %}">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label class="form-label">Doctor Consultation Notes</label>
+                    <textarea name="consultation_notes" class="form-control" rows="3" placeholder="Enter clinical diagnosis, symptoms observed, or medicine dosages...">{{ consultation.consultation_notes|default:'' }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Upload Prescription PDF Document (Max 5MB)</label>
+                    <input type="file" name="prescription_file" class="form-control" accept=".pdf">
+                    {% if consultation.prescription_file %}
+                        <div style="margin-top: 0.5rem; font-size: 0.85rem; color: #059669;">
+                            ✓ Prescription Uploaded: <a href="{{ consultation.prescription_file.url }}" target="_blank">View PDF</a>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save Notes & Upload Prescription</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Right Live Chat Thread -->
+    <div>
+        <div class="glass-card" style="height: 100%; display: flex; flex-direction: column;">
+            <h3 style="font-size: 1.1rem; color: var(--dark); margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">
+                💬 Live Chat Thread
+            </h3>
+
+            <!-- Messages Stream -->
+            <div style="flex: 1; min-height: 300px; max-height: 420px; overflow-y: auto; padding-right: 0.5rem; display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1rem;">
+                {% for msg in chat_messages %}
+                <div style="align-self: {% if msg.sender == user %}flex-end{% else %}flex-start{% endif %}; max-width: 80%; background: {% if msg.sender == user %}var(--primary-light){% else %}#f1f5f9{% endif %}; padding: 0.65rem 0.85rem; border-radius: var(--radius-sm);">
+                    <div style="font-size: 0.75rem; font-weight: 700; color: var(--dark); margin-bottom: 0.15rem;">
+                        {{ msg.sender.username }}
+                    </div>
+                    <div style="font-size: 0.9rem; color: var(--text-primary);">{{ msg.message }}</div>
+                    <div style="font-size: 0.65rem; color: var(--text-muted); text-align: right; margin-top: 0.25rem;">
+                        {{ msg.timestamp|date:"H:i" }}
+                    </div>
+                </div>
+                {% empty %}
+                <div style="text-align: center; color: var(--text-muted); margin: auto; font-size: 0.85rem;">
+                    No chat messages yet. Type a message below to communicate.
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Send Message Input -->
+            <form method="POST" action="{% url 'telemedicine:send_message' consultation.id %}" style="display: flex; gap: 0.5rem;">
+                {% csrf_token %}
+                <input type="text" name="message" class="form-control" placeholder="Type message..." required>
+                <button type="submit" class="btn btn-primary" style="padding: 0.6rem 1rem;">Send</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

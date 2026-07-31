@@ -1,0 +1,50 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Upload Medical Report - MediHome{% endblock %}
+
+{% block dashboard_content %}
+<div style="max-width: 600px; margin: 2rem auto;">
+    <div class="glass-card">
+        <h2 style="font-size: 1.5rem; color: var(--dark); margin-bottom: 0.5rem;">Upload Medical Report</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.9rem;">
+            Booking #{{ booking.booking_number }} | Patient: {{ booking.patient.username }}
+        </p>
+
+        <form method="POST" enctype="multipart/form-data" action="." class="needs-validation">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label class="form-label">Report Title *</label>
+                <input type="text" name="report_title" class="form-control" value="Blood & Diagnostic Test Report" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Report Type *</label>
+                <select name="report_type" class="form-control" required>
+                    <option value="BLOOD">Blood Test Report</option>
+                    <option value="URINE">Urine Test Report</option>
+                    <option value="BIOCHEMISTRY">Biochemistry Report</option>
+                    <option value="HAEMATOLOGY">Haematology Report</option>
+                    <option value="OTHER">General Health Report</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">PDF Medical Report Document * (Max 5MB)</label>
+                <input type="file" name="pdf_file" class="form-control" accept=".pdf" required>
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Strict Validation: Only PDF files (.pdf) up to 5MB size allowed.</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Pathologist Summary Notes</label>
+                <textarea name="summary_notes" class="form-control" rows="3" placeholder="Enter findings, hemoglobin values, lipid levels, or doctor observations..."></textarea>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                <button type="submit" class="btn btn-primary" style="flex: 1;">Upload Report & Notify Patient</button>
+                <a href="{% url 'diagnostics:booking_list' %}" class="btn btn-outline">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

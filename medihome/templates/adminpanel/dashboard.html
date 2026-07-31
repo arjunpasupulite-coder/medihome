@@ -1,0 +1,82 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Central Admin Console - MediHome{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h2 style="font-size: 1.75rem; color: var(--dark);">MediHome Central Admin Console</h2>
+        <p style="color: var(--text-secondary);">Manage system configurations, user roles, partner lab approvals, and system analytics.</p>
+    </div>
+    <a href="{% url 'adminpanel:manage_system_settings' %}" class="btn btn-primary">⚙️ Dynamic System Settings</a>
+</div>
+
+<!-- Admin Statistics Overview Cards -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-info">
+            <h4>Total Users</h4>
+            <div class="value">{{ total_users }}</div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">🧪</div>
+        <div class="stat-info">
+            <h4>Laboratories</h4>
+            <div class="value">{{ lab_count }}</div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">🏥</div>
+        <div class="stat-info">
+            <h4>Hospitals</h4>
+            <div class="value">{{ hospital_count }}</div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div class="stat-info">
+            <h4>Total Platform Sales</h4>
+            <div class="value">₹{{ total_revenue }}</div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Admin Management Links -->
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+    <a href="{% url 'adminpanel:manage_users' %}" class="glass-card" style="text-align: center; text-decoration: none; padding: 1.25rem;">
+        <div style="font-size: 1.75rem; margin-bottom: 0.25rem;">👤</div>
+        <div style="font-weight: 700; color: var(--dark);">User Management</div>
+    </a>
+    
+    <a href="{% url 'adminpanel:manage_labs' %}" class="glass-card" style="text-align: center; text-decoration: none; padding: 1.25rem;">
+        <div style="font-size: 1.75rem; margin-bottom: 0.25rem;">🔬</div>
+        <div style="font-weight: 700; color: var(--dark);">Lab Approvals</div>
+    </a>
+
+    <a href="{% url 'adminpanel:manage_hospitals' %}" class="glass-card" style="text-align: center; text-decoration: none; padding: 1.25rem;">
+        <div style="font-size: 1.75rem; margin-bottom: 0.25rem;">🏥</div>
+        <div style="font-weight: 700; color: var(--dark);">Hospital Approvals</div>
+    </a>
+
+    <a href="{% url 'adminpanel:manage_symptom_mappings' %}" class="glass-card" style="text-align: center; text-decoration: none; padding: 1.25rem;">
+        <div style="font-size: 1.75rem; margin-bottom: 0.25rem;">🩺</div>
+        <div style="font-weight: 700; color: var(--dark);">Symptom Mappings</div>
+    </a>
+</div>
+
+<!-- System Settings Summary -->
+<div class="glass-card">
+    <h3 style="font-size: 1.1rem; color: var(--dark); margin-bottom: 1rem;">Active System Configurations</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; font-size: 0.9rem;">
+        <div><strong>GST Percentage:</strong> {{ system_settings.gst_percentage }}%</div>
+        <div><strong>Platform Fee:</strong> ₹{{ system_settings.platform_fee }}</div>
+        <div><strong>Home Collection Charge:</strong> ₹{{ system_settings.home_collection_charge }}</div>
+        <div><strong>Support Email:</strong> {{ system_settings.support_email }}</div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Select Hospital - OP Booking - MediHome{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h2 style="font-size: 1.75rem; color: var(--dark);">Hospital OP Booking - Step 1 of 4</h2>
+        <p style="color: var(--text-secondary);">Select partner hospital to view medical departments and specialist doctors.</p>
+    </div>
+    <a href="{% url 'hospitals:doctor_recommendations' %}" class="btn btn-outline">
+        Don't know which doctor? View Doctor Recommendations
+    </a>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
+    {% for hospital in hospitals %}
+    <div class="glass-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                <div style="width: 54px; height: 54px; border-radius: 12px; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; flex-shrink: 0;">
+                    🏥
+                </div>
+                <div>
+                    <h3 style="font-size: 1.2rem; color: var(--dark); font-weight: 700;">{{ hospital.hospital_name }}</h3>
+                    <span class="badge badge-success">Approved Hospital</span>
+                </div>
+            </div>
+
+            <div style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.35rem;">
+                <div>📍 <strong>Address:</strong> {{ hospital.address }}</div>
+                <div>📞 <strong>Emergency:</strong> {{ hospital.emergency_contact }}</div>
+                <div>⏰ <strong>Hours:</strong> {{ hospital.working_hours }}</div>
+            </div>
+        </div>
+
+        <div style="border-top: 1px solid var(--border); padding-top: 1rem;">
+            <a href="{% url 'hospitals:op_booking_departments' hospital.id %}" class="btn btn-primary" style="width: 100%; text-align: center;">
+                Select Hospital & View Departments →
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="glass-card" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+        <h3 style="color: var(--text-secondary);">No hospitals registered currently.</h3>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

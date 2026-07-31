@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block title %}Patient Registration - MediHome{% endblock %}
+
+{% block content %}
+<div style="max-width: 700px; margin: 2rem auto; padding: 0 1rem;">
+    <div class="glass-card">
+        <h2 style="font-size: 1.75rem; color: var(--dark); margin-bottom: 0.5rem;">Patient Registration</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+            Create your MediHome Patient Account to book home sample diagnostic tests and OPD consultations.
+        </p>
+
+        <form method="POST" action="." class="needs-validation">
+            {% csrf_token %}
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">First Name *</label>
+                    {{ form.first_name }}
+                    {% if form.first_name.errors %}<div style="color: #ef4444; font-size: 0.8rem;">{{ form.first_name.errors.0 }}</div>{% endif %}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Last Name *</label>
+                    {{ form.last_name }}
+                    {% if form.last_name.errors %}<div style="color: #ef4444; font-size: 0.8rem;">{{ form.last_name.errors.0 }}</div>{% endif %}
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">Username *</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}<div style="color: #ef4444; font-size: 0.8rem;">{{ form.username.errors.0 }}</div>{% endif %}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email Address *</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}<div style="color: #ef4444; font-size: 0.8rem;">{{ form.email.errors.0 }}</div>{% endif %}
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">Password *</label>
+                    {{ form.password }}
+                    {% if form.password.errors %}<div style="color: #ef4444; font-size: 0.8rem;">{{ form.password.errors.0 }}</div>{% endif %}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirm Password *</label>
+                    {{ form.confirm_password }}
+                    {% if form.confirm_password.errors %}<div style="color: #ef4444; font-size: 0.8rem;">{{ form.confirm_password.errors.0 }}</div>{% endif %}
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">Blood Group</label>
+                    {{ form.blood_group }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Date of Birth</label>
+                    {{ form.dob }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Gender</label>
+                    {{ form.gender }}
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">Phone Number *</label>
+                    {{ form.phone_number }}
+                    {% if form.phone_number.errors %}<div style="color: #ef4444; font-size: 0.8rem;">{{ form.phone_number.errors.0 }}</div>{% endif %}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Emergency Contact *</label>
+                    {{ form.emergency_contact }}
+                    {% if form.emergency_contact.errors %}<div style="color: #ef4444; font-size: 0.8rem;">{{ form.emergency_contact.errors.0 }}</div>{% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Full Residential Address *</label>
+                {{ form.address }}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Existing Medical Conditions / History</label>
+                {{ form.medical_history }}
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Register Patient Account</button>
+        </form>
+
+        <div style="margin-top: 1.5rem; text-align: center; font-size: 0.9rem;">
+            Already registered? <a href="{% url 'accounts:login_patient' %}">Sign In as Patient</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

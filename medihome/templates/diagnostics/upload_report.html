@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload Diagnostic PDF Report – Booking #{{ booking.id }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center my-4">
+    <div class="col-md-6">
+        <div class="card medihome-card border-0 p-4">
+            <h3 class="brand-font text-dark mb-3"><i class="fa-solid fa-file-pdf text-danger me-2"></i>Upload Diagnostic Report</h3>
+            <p class="text-muted small mb-4">Upload electronic PDF report for Booking #<strong>{{ booking.id }}</strong> (Patient: {{ booking.patient.first_name|default:booking.patient.username }}).</p>
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label small text-muted fw-semibold">Report PDF URL / Path</label>
+                    <input type="text" name="file_url" class="form-control" value="/static/reports/sample_cbc_report.pdf" required>
+                    <small class="text-muted d-block mt-1">Default demo PDF generator path set automatically.</small>
+                </div>
+
+                <div class="p-3 bg-light rounded-3 mb-4 small text-muted">
+                    <div><strong>Tests Included:</strong> {{ booking.tests_summary }}</div>
+                    <div><strong>Collection Date:</strong> {{ booking.booking_date }}</div>
+                </div>
+
+                <button type="submit" class="btn btn-primary-custom w-100 py-2.5 fw-bold">
+                    <i class="fa-solid fa-cloud-arrow-up me-2"></i>Publish PDF Report to Patient EHR
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

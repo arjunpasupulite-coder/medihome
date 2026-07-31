@@ -1,0 +1,55 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Manage Doctors - MediHome{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h2 style="font-size: 1.75rem; color: var(--dark);">Hospital Doctors Roster</h2>
+        <p style="color: var(--text-secondary);">Manage specialist doctors, consultation fees, and available hours.</p>
+    </div>
+    <a href="{% url 'hospitals:doctor_add' %}" class="btn btn-primary">+ Add New Doctor</a>
+</div>
+
+<div class="glass-card">
+    <div class="table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Doctor Name</th>
+                    <th>Department</th>
+                    <th>Qualification</th>
+                    <th>Experience</th>
+                    <th>Fee</th>
+                    <th>Available Hours</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for doc in doctors %}
+                <tr>
+                    <td><strong>👨‍⚕️ Dr. {{ doc.name }}</strong></td>
+                    <td><span class="badge badge-info">{{ doc.department.name }}</span></td>
+                    <td>{{ doc.qualification }}</td>
+                    <td>{{ doc.experience_years }} Years</td>
+                    <td><strong style="color: var(--dark);">₹{{ doc.consultation_fee }}</strong></td>
+                    <td>{{ doc.available_time_start|time:"h:i A" }} - {{ doc.available_time_end|time:"h:i A" }}</td>
+                    <td>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <a href="{% url 'hospitals:doctor_edit' doc.id %}" class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">Edit</a>
+                            <a href="{% url 'hospitals:doctor_delete' doc.id %}" class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.8rem; color: #ef4444; border-color: #ef4444;" onclick="return confirm('Delete doctor record?');">Delete</a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                        No doctors added yet. Click "Add New Doctor" to add medical staff.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

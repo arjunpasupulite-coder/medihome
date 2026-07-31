@@ -1,0 +1,55 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Lab Approvals & Management - Admin Console - MediHome{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h2 style="font-size: 1.75rem; color: var(--dark);">Diagnostician Laboratory Approvals</h2>
+        <p style="color: var(--text-secondary);">Review medical licenses, GST numbers, and toggle lab approval status.</p>
+    </div>
+</div>
+
+<div class="glass-card">
+    <div class="table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Lab Name</th>
+                    <th>Owner</th>
+                    <th>License</th>
+                    <th>GST</th>
+                    <th>NABL Accredited</th>
+                    <th>Approval Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for lab in labs_list %}
+                <tr>
+                    <td><strong>🔬 {{ lab.lab_name }}</strong></td>
+                    <td>{{ lab.owner_name }}</td>
+                    <td>{{ lab.license_number }}</td>
+                    <td>{{ lab.gst_number }}</td>
+                    <td>
+                        {% if lab.nabl_accredited %}<span class="badge badge-success">Yes</span>{% else %}<span class="badge badge-secondary">No</span>{% endif %}
+                    </td>
+                    <td>
+                        {% if lab.is_approved_by_admin %}
+                            <span class="badge badge-success">Approved</span>
+                        {% else %}
+                            <span class="badge badge-warning">Pending Approval</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'adminpanel:toggle_lab_approval' lab.id %}" class="btn btn-outline" style="padding: 0.35rem 0.65rem; font-size: 0.8rem;">
+                            {% if lab.is_approved_by_admin %}Revoke Approval{% else %}Approve Lab{% endif %}
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

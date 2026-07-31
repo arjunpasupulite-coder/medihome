@@ -1,0 +1,142 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}My Diagnostic Cart - MediHome{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h2 style="font-size: 1.75rem; color: var(--dark);">Diagnostic Tests Cart</h2>
+        <p style="color: var(--text-secondary);">Review your selected home sample collection tests and coupon discounts.</p>
+    </div>
+    {% if cart_items %}
+    <a href="{% url 'patients:clear_cart' %}" class="btn btn-outline" style="color: #ef4444; border-color: #ef4444;">Clear Cart</a>
+    {% endif %}
+</div>
+
+{% if cart_items %}
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+    
+    <!-- Left Table of Cart Items -->
+    <div>
+        <div class="table-container" style="margin-bottom: 1.5rem;">
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>Test Details</th>
+                        <th>Laboratory</th>
+                        <th>Price</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart_items %}
+                    <tr>
+                        <td>
+                            <div style="font-weight: 700; color: var(--dark);">{{ item.test.name }}</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">
+                                {% if item.test.is_home_collection_compatible %}
+                                    ✓ Home Sample Collection Included
+                                {% else %}
+                                    In-Lab Procedure
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>{{ item.test.lab.lab_name }}</td>
+                        <td><strong style="color: var(--dark);">₹{{ item.test.price }}</strong></td>
+                        <td>
+                            <a href="{% url 'patients:remove_from_cart' item.id %}" style="color: #ef4444; font-weight: 600; font-size: 0.85rem;">Remove</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Coupon Apply Card -->
+        <div class="glass-card">
+            <h4 style="font-size: 1rem; color: var(--dark); margin-bottom: 0.75rem;">Apply Promotional Coupon</h4>
+            <form method="POST" action="{% url 'patients:cart' %}" style="display: flex; gap: 0.75rem;">
+                {% csrf_token %}
+                <input type="text" name="coupon_code" class="form-control" placeholder="Enter Coupon Code (e.g. HEALTH10)" value="{{ applied_coupon.code|default:'' }}">
+                <button type="submit" class="btn btn-primary" style="white-space: nowrap;">Apply</button>
+            </form>
+
+            {% if coupon_message %}
+            <div style="margin-top: 0.75rem; font-size: 0.85rem; font-weight: 600; color: {% if applied_coupon %}#059669{% else %}#ef4444{% endif %};">
+                {{ coupon_message }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Right Financial Calculation Breakdown -->
+    <div>
+        <div class="glass-card">
+            <h3 style="font-size: 1.2rem; color: var(--dark); margin-bottom: 1.25rem; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem;">
+                Billing Summary
+            </h3>
+
+            <div style="display: flex; flex-direction: column; gap: 0.85rem; font-size: 0.95rem;">
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: var(--text-secondary);">Tests Subtotal</span>
+                    <strong style="color: var(--dark);">₹{{ subtotal }}</strong>
+                </div>
+
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: var(--text-secondary);">GST ({{ gst_percentage }}% dynamic)</span>
+                    <strong style="color: var(--dark);">₹{{ gst_amount }}</strong>
+                </div>
+
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: var(--text-secondary);">Platform Fee</span>
+                    <strong style="color: var(--dark);">₹{{ platform_fee }}</strong>
+                </div>
+
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="color: var(--text-secondary);">Home Collection Charge</span>
+                    <strong style="color: var(--dark);">₹{{ home_collection_fee }}</strong>
+                </div>
+
+                {% if discount_amount > 0 %}
+                <div style="display: flex; justify-content: space-between; color: #059669;">
+                    <span>Coupon Discount</span>
+                    <strong>- ₹{{ discount_amount }}</strong>
+                </div>
+                {% endif %}
+
+                <hr style="border: none; border-top: 1px solid var(--border); margin: 0.5rem 0;">
+
+                <div style="display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: 800; color: var(--dark);">
+                    <span>Grand Total</span>
+                    <span style="color: var(--primary-hover);">₹{{ grand_total }}</span>
+                </div>
+            </div>
+
+            <div style="background: #f8fafc; padding: 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--border); font-size: 0.75rem; color: var(--text-muted); margin: 1.25rem 0;">
+                🔒 All calculations are verified dynamically on the backend against active <code>SystemSettings</code>.
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <a href="{% url 'patients:checkout' %}" class="btn btn-primary" style="width: 100%; padding: 0.85rem; text-align: center;">
+                    Proceed to Checkout
+                </a>
+                <a href="{% url 'patients:diagnostic_search' %}" class="btn btn-outline" style="width: 100%; text-align: center;">
+                    Continue Shopping
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<div class="glass-card" style="text-align: center; padding: 4rem 2rem;">
+    <div style="font-size: 3rem; margin-bottom: 1rem;">🛒</div>
+    <h3 style="color: var(--dark); font-size: 1.5rem; margin-bottom: 0.5rem;">Your Cart is Currently Empty</h3>
+    <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Browse home diagnostic tests or use our symptom recommendation engine.</p>
+    <div style="display: flex; gap: 1rem; justify-content: center;">
+        <a href="{% url 'patients:diagnostic_search' %}" class="btn btn-primary">Search Diagnostic Tests</a>
+        <a href="{% url 'patients:symptom_recommendations' %}" class="btn btn-outline">Symptom Recommendations</a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

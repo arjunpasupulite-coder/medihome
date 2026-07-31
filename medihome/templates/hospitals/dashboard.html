@@ -1,0 +1,36 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Hospital Desk - MediHome{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h2 style="font-size: 1.75rem; color: var(--dark);">Hospital OPD Portal</h2>
+        <p style="color: var(--text-secondary);">Manage hospital departments, doctors, and patient OP consultations.</p>
+    </div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">🏥</div>
+        <div class="stat-info">
+            <h4>Departments</h4>
+            <div class="value">0</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">👨‍⚕️</div>
+        <div class="stat-info">
+            <h4>Doctors</h4>
+            <div class="value">0</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">📅</div>
+        <div class="stat-info">
+            <h4>OP Appointments</h4>
+            <div class="value">0</div>
+        </div>
+    </div>
+</div>
+{% endblock %}

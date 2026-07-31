@@ -1,0 +1,116 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Checkout Diagnostic Order - MediHome{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h2 style="font-size: 1.75rem; color: var(--dark);">Checkout & Schedule Collection</h2>
+        <p style="color: var(--text-secondary);">Select collection date, time, and address for home sample technician dispatch.</p>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+    
+    <!-- Left Checkout Details Form -->
+    <div class="glass-card">
+        <h3 style="font-size: 1.2rem; color: var(--dark); margin-bottom: 1.25rem;">Home Sample Collection Details</h3>
+
+        <form method="POST" action="." class="needs-validation">
+            {% csrf_token %}
+            {% if applied_coupon %}
+                <input type="hidden" name="coupon_code" value="{{ applied_coupon.code }}">
+            {% endif %}
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">Preferred Collection Date *</label>
+                    <input type="date" name="collection_date" class="form-control" required min="2026-07-31">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Preferred Time Slot *</label>
+                    <select name="collection_time" class="form-control" required>
+                        <option value="">Select Time Slot</option>
+                        <option value="07:00 AM - 09:00 AM">07:00 AM - 09:00 AM (Morning Fasting)</option>
+                        <option value="09:00 AM - 11:00 AM">09:00 AM - 11:00 AM</option>
+                        <option value="11:00 AM - 01:00 PM">11:00 AM - 01:00 PM</option>
+                        <option value="02:00 PM - 04:00 PM">02:00 PM - 04:00 PM</option>
+                        <option value="04:00 PM - 06:00 PM">04:00 PM - 06:00 PM</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Full Address for Sample Collection *</label>
+                <textarea name="address" class="form-control" rows="3" required placeholder="Flat/House No, Building Name, Street, Landmark, Pincode">{{ user.address }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Patient Contact Phone *</label>
+                <input type="text" name="phone_number" class="form-control" value="{{ user.phone_number }}" required>
+            </div>
+
+            <div style="background: #e0f2fe; color: #0369a1; padding: 0.85rem 1rem; border-radius: var(--radius-sm); border: 1px solid #bae6fd; font-size: 0.875rem; margin: 1.5rem 0;">
+                ℹ️ Once confirmed, a certified Phlebotomist Technician will be assigned to visit your specified address.
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; font-size: 1.05rem;">
+                Confirm Order & Proceed to Payment Gateway
+            </button>
+        </form>
+    </div>
+
+    <!-- Right Recalculated Order Summary -->
+    <div>
+        <div class="glass-card">
+            <h3 style="font-size: 1.1rem; color: var(--dark); margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">
+                Order Summary ({{ cart_items.count }} Tests)
+            </h3>
+
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.875rem; margin-bottom: 1.25rem;">
+                {% for item in cart_items %}
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: 600; color: var(--dark);">{{ item.test.name }}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">{{ item.test.lab.lab_name }}</div>
+                    </div>
+                    <strong style="color: var(--dark);">₹{{ item.test.price }}</strong>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div style="border-top: 1px solid var(--border); padding-top: 1rem; display: flex; flex-direction: column; gap: 0.65rem; font-size: 0.9rem;">
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Subtotal</span>
+                    <span>₹{{ subtotal }}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>GST ({{ gst_percentage }}% dynamic)</span>
+                    <span>₹{{ gst_amount }}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Platform Fee</span>
+                    <span>₹{{ platform_fee }}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Home Collection</span>
+                    <span>₹{{ home_collection_fee }}</span>
+                </div>
+                {% if discount_amount > 0 %}
+                <div style="display: flex; justify-content: space-between; color: #059669;">
+                    <span>Discount ({{ applied_coupon.code }})</span>
+                    <span>- ₹{{ discount_amount }}</span>
+                </div>
+                {% endif %}
+
+                <hr style="border: none; border-top: 1px solid var(--border); margin: 0.25rem 0;">
+
+                <div style="display: flex; justify-content: space-between; font-size: 1.15rem; font-weight: 800; color: var(--dark);">
+                    <span>Grand Total</span>
+                    <span style="color: var(--primary);">₹{{ grand_total }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

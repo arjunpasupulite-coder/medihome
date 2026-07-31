@@ -1,0 +1,52 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Select Doctor - {{ department.name }} - MediHome{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h2 style="font-size: 1.75rem; color: var(--dark);">Select Specialist Doctor - Step 3 of 4</h2>
+        <p style="color: var(--text-secondary);">Department: <strong>{{ department.name }}</strong> ({{ hospital.hospital_name }})</p>
+    </div>
+    <a href="{% url 'hospitals:op_booking_departments' hospital.id %}" class="btn btn-outline">← Back to Departments</a>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
+    {% for doctor in doctors %}
+    <div class="glass-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                <div style="width: 58px; height: 58px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.75rem; font-weight: bold; flex-shrink: 0;">
+                    {% if doctor.photo %}
+                        <img src="{{ doctor.photo.url }}" alt="Photo" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                    {% else %}
+                        👨‍⚕️
+                    {% endif %}
+                </div>
+                <div>
+                    <h3 style="font-size: 1.2rem; color: var(--dark); font-weight: 700;">Dr. {{ doctor.name }}</h3>
+                    <div style="font-size: 0.85rem; color: var(--primary-hover); font-weight: 600;">{{ doctor.qualification }}</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted);">{{ doctor.experience_years }} Years Experience</div>
+                </div>
+            </div>
+
+            <div style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.35rem;">
+                <div>🗓️ <strong>Available Days:</strong> {{ doctor.available_days }}</div>
+                <div>⏰ <strong>Available Hours:</strong> {{ doctor.available_time_start|time:"h:i A" }} - {{ doctor.available_time_end|time:"h:i A" }}</div>
+                <div>💰 <strong>Consultation Fee:</strong> ₹{{ doctor.consultation_fee }}</div>
+            </div>
+        </div>
+
+        <div style="border-top: 1px solid var(--border); padding-top: 1rem;">
+            <a href="{% url 'hospitals:op_booking_slots' doctor.id %}" class="btn btn-primary" style="width: 100%; text-align: center;">
+                Select Date & 30-Min Slot →
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="glass-card" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+        <h3 style="color: var(--text-secondary);">No doctors listed under this department currently.</h3>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

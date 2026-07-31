@@ -1,0 +1,84 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Lab Bookings Management - MediHome{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h2 style="font-size: 1.75rem; color: var(--dark);">Laboratory Bookings Management</h2>
+        <p style="color: var(--text-secondary);">Manage incoming diagnostic bookings, assign technicians, and advance status timeline.</p>
+    </div>
+</div>
+
+<div class="glass-card">
+    <div class="table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Booking #</th>
+                    <th>Patient</th>
+                    <th>Date & Slot</th>
+                    <th>Grand Total</th>
+                    <th>Current Status</th>
+                    <th>Assigned Technician</th>
+                    <th>Actions / Update Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings %}
+                <tr>
+                    <td><strong>#{{ booking.booking_number }}</strong></td>
+                    <td>{{ booking.patient.username }}</td>
+                    <td>
+                        <div>📅 {{ booking.collection_date }}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">{{ booking.collection_time }}</div>
+                    </td>
+                    <td><strong style="color: var(--dark);">₹{{ booking.grand_total }}</strong></td>
+                    <td><span class="badge badge-info">{{ booking.get_status_display }}</span></td>
+                    <td>
+                        {% if booking.technician %}
+                            🚴 {{ booking.technician.name }}
+                        {% else %}
+                            <span style="color: var(--text-muted); font-size: 0.8rem;">Unassigned</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form method="POST" action="{% url 'diagnostics:update_booking_status' booking.id %}" style="display: flex; gap: 0.5rem; flex-direction: column;">
+                            {% csrf_token %}
+                            <select name="status" class="form-control" style="font-size: 0.8rem; padding: 0.35rem;">
+                                {% for code, label in booking.Status.choices %}
+                                    <option value="{{ code }}" {% if booking.status == code %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+
+                            <select name="technician_id" class="form-control" style="font-size: 0.8rem; padding: 0.35rem;">
+                                <option value="">Select Technician</option>
+                                {% for tech in technicians %}
+                                    <option value="{{ tech.id }}" {% if booking.technician and booking.technician.id == tech.id %}selected{% endif %}>
+                                        {{ tech.name }} ({{ tech.area }})
+                                    </option>
+                                {% endfor %}
+                            </select>
+
+                            <button type="submit" class="btn btn-primary" style="padding: 0.35rem; font-size: 0.75rem;">
+                                Save Status Change
+                            </button>
+                        </form>
+
+                        <div style="margin-top: 0.5rem; font-size: 0.8rem;">
+                            <a href="{% url 'reports:upload_report' booking.id %}" style="color: var(--primary); font-weight: 600;">+ Upload Report PDF</a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                        No diagnostic bookings received yet.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Patient Dashboard - MediHome{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h2 style="font-size: 1.75rem; color: var(--dark);">Welcome, {{ user.get_full_name|default:user.username }}</h2>
+        <p style="color: var(--text-secondary);">Manage your diagnostic test bookings, hospital OP consultations, and health records.</p>
+    </div>
+</div>
+
+
+
+<!-- Active Medication Reminders Highlight -->
+{% if active_reminders %}
+<div class="glass-card" style="margin-bottom: 2rem; border-left: 4px solid var(--accent);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h3 style="font-size: 1.15rem; color: var(--dark); font-weight: 700;">💊 Today's Medication Reminders</h3>
+        <a href="{% url 'patients:medicine_reminders' %}" style="font-size: 0.85rem; font-weight: 600; color: var(--primary);">View Full Schedule →</a>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem;">
+        {% for ritem in active_reminders %}
+        <div style="background: var(--white); border: 1px solid var(--border); padding: 0.85rem 1rem; border-radius: var(--radius-sm);">
+            <div style="font-weight: 700; color: var(--dark); font-size: 1rem; margin-bottom: 0.25rem;">{{ ritem.reminder.medicine_name }}</div>
+            <div style="display: flex; gap: 0.35rem; margin-bottom: 0.35rem;">
+                {% if ritem.reminder.morning %}<span class="badge badge-warning">Morning 🌅</span>{% endif %}
+                {% if ritem.reminder.afternoon %}<span class="badge badge-warning">Afternoon ☀️</span>{% endif %}
+                {% if ritem.reminder.night %}<span class="badge badge-info">Night 🌙</span>{% endif %}
+            </div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">{{ ritem.days_remaining }} days remaining in course</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Recent Activity Summary Grid -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+    <!-- Recent Bookings -->
+    <div class="glass-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h3 style="font-size: 1.1rem; color: var(--dark);">Recent Diagnostic Bookings</h3>
+            <a href="{% url 'patients:booking_history' %}" style="font-size: 0.8rem; font-weight: 600;">View All</a>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            {% for b in bookings %}
+            <div style="background: var(--white); border: 1px solid var(--border); padding: 0.75rem 1rem; border-radius: var(--radius-sm); display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <div style="font-weight: 700; color: var(--dark); font-size: 0.9rem;">#{{ b.booking_number }}</div>
+                    <div style="font-size: 0.8rem; color: var(--text-secondary);">{{ b.diagnostician.lab_name }}</div>
+                </div>
+                <div style="text-align: right;">
+                    <span class="badge badge-info">{{ b.get_status_display }}</span>
+                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">{{ b.collection_date }}</div>
+                </div>
+            </div>
+            {% empty %}
+            <div style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 1.5rem;">
+                No recent diagnostic bookings.
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Recent OP Appointments -->
+    <div class="glass-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h3 style="font-size: 1.1rem; color: var(--dark);">Recent OP Appointments</h3>
+            <a href="{% url 'hospitals:appointment_list' %}" style="font-size: 0.8rem; font-weight: 600;">View All</a>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            {% for appt in appointments %}
+            <div style="background: var(--white); border: 1px solid var(--border); padding: 0.75rem 1rem; border-radius: var(--radius-sm); display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <div style="font-weight: 700; color: var(--dark); font-size: 0.9rem;">Dr. {{ appt.doctor.name }}</div>
+                    <div style="font-size: 0.8rem; color: var(--text-secondary);">{{ appt.hospital.hospital_name }}</div>
+                </div>
+                <div style="text-align: right;">
+                    <span class="badge badge-success">{{ appt.get_status_display }}</span>
+                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">{{ appt.appointment_date }}</div>
+                </div>
+            </div>
+            {% empty %}
+            <div style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 1.5rem;">
+                No recent OP appointments.
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

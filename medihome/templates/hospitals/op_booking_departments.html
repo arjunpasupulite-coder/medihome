@@ -1,0 +1,35 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Select Department - {{ hospital.hospital_name }} - MediHome{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h2 style="font-size: 1.75rem; color: var(--dark);">Select Department - Step 2 of 4</h2>
+        <p style="color: var(--text-secondary);">Hospital: <strong>{{ hospital.hospital_name }}</strong></p>
+    </div>
+    <a href="{% url 'hospitals:op_booking' %}" class="btn btn-outline">← Back to Hospitals</a>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
+    {% for dept in departments %}
+    <div class="glass-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🩺</div>
+            <h3 style="font-size: 1.25rem; color: var(--dark); font-weight: 700; margin-bottom: 0.5rem;">{{ dept.name }}</h3>
+            <p style="font-size: 0.85rem; color: var(--text-secondary);">{{ dept.description|default:"Specialized clinical department" }}</p>
+        </div>
+
+        <div style="border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 1rem;">
+            <a href="{% url 'hospitals:op_booking_doctors' dept.id %}" class="btn btn-primary" style="width: 100%; text-align: center;">
+                View Specialist Doctors →
+            </a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="glass-card" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+        <h3 style="color: var(--text-secondary);">No departments created yet for this hospital.</h3>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Lab Revenue Analytics - MediHome{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h2 style="font-size: 1.75rem; color: var(--dark);">Laboratory Revenue Analytics</h2>
+        <p style="color: var(--text-secondary);">Track daily, weekly, and monthly earnings and test sales metrics.</p>
+    </div>
+</div>
+
+<!-- Revenue Statistics Grid -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div class="stat-info">
+            <h4>Today's Revenue</h4>
+            <div class="value">₹{{ daily_revenue }}</div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">📅</div>
+        <div class="stat-info">
+            <h4>This Week</h4>
+            <div class="value">₹{{ weekly_revenue }}</div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">📊</div>
+        <div class="stat-info">
+            <h4>This Month</h4>
+            <div class="value">₹{{ monthly_revenue }}</div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon">🏆</div>
+        <div class="stat-info">
+            <h4>Total Revenue</h4>
+            <div class="value">₹{{ total_revenue }}</div>
+        </div>
+    </div>
+</div>
+
+<!-- Popular Tests Breakdown Table -->
+<div class="glass-card">
+    <h3 style="font-size: 1.25rem; color: var(--dark); margin-bottom: 1.25rem;">Most Booked Diagnostic Tests</h3>
+
+    <div class="table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Test Name</th>
+                    <th>Orders Completed</th>
+                    <th>Gross Sales Generated</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for test in popular_tests %}
+                <tr>
+                    <td><strong>{{ test.test__name }}</strong></td>
+                    <td><span class="badge badge-info">{{ test.order_count }} Orders</span></td>
+                    <td><strong style="color: var(--primary-hover);">₹{{ test.total_sales }}</strong></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                        No revenue metrics available yet.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

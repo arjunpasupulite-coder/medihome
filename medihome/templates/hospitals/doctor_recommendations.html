@@ -1,0 +1,60 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Doctor Recommendations - MediHome{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h2 style="font-size: 1.75rem; color: var(--dark);">Symptom Doctor Recommendation</h2>
+        <p style="color: var(--text-secondary);">Find the right specialist doctor based on your health symptoms.</p>
+    </div>
+</div>
+
+<!-- Predefined Symptom Mappings Cards -->
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 2rem;">
+    {% for map in mappings %}
+    <a href="{% url 'hospitals:doctor_recommendations' %}?symptom={{ map.symptom|urlencode }}" class="glass-card" style="display: flex; align-items: center; gap: 1rem; text-decoration: none; border-left: 4px solid var(--primary); {% if map.symptom == symptom_key %}background: var(--primary-light);{% endif %}">
+        <span style="font-size: 2.25rem;">{{ map.icon }}</span>
+        <div>
+            <div style="font-size: 0.8rem; font-weight: 700; color: var(--primary-hover); text-transform: uppercase;">{{ map.specialty }}</div>
+            <div style="font-weight: 600; color: var(--dark); font-size: 0.95rem;">{{ map.symptom }}</div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+
+<!-- Recommended Doctor Results -->
+{% if selected_mapping %}
+<div class="glass-card">
+    <h3 style="font-size: 1.25rem; color: var(--dark); margin-bottom: 1.25rem;">
+        Recommended {{ selected_mapping.specialty }} Specialists for "{{ selected_mapping.symptom }}"
+    </h3>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
+        {% for doc in recommended_doctors %}
+        <div style="background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <div style="display: flex; align-items: center; gap: 0.85rem; margin-bottom: 0.75rem;">
+                    <div style="font-size: 2rem;">👨‍⚕️</div>
+                    <div>
+                        <h4 style="font-size: 1.1rem; color: var(--dark); font-weight: 700;">Dr. {{ doc.name }}</h4>
+                        <div style="font-size: 0.85rem; color: var(--primary-hover); font-weight: 600;">{{ doc.qualification }}</div>
+                    </div>
+                </div>
+                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem;">🏥 <strong>Hospital:</strong> {{ doc.hospital.hospital_name }}</p>
+                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">💰 <strong>Fee:</strong> ₹{{ doc.consultation_fee }}</p>
+            </div>
+
+            <a href="{% url 'hospitals:op_booking_slots' doc.id %}" class="btn btn-primary" style="width: 100%; text-align: center;">
+                Book OP Appointment
+            </a>
+        </div>
+        {% empty %}
+        <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--text-muted);">
+            No doctors found matching specialty <strong>{{ selected_mapping.specialty }}</strong> currently registered.
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

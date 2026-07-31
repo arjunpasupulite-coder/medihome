@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Hospital Reviews & Feedback – MediHome{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-12">
+        <div class="card medihome-card border-0 p-4 bg-white">
+            <h2 class="h3 brand-font text-dark mb-1"><i class="fa-solid fa-star text-warning me-2"></i>Patient Reviews & Hospital Ratings</h2>
+            <p class="text-muted small mb-0">Monitor patient satisfaction ratings for outpatient care, doctor consultations, and facility facilities.</p>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="card medihome-card border-0 p-4">
+            {% if reviews %}
+            <div class="d-flex flex-column gap-3">
+                {% for r in reviews %}
+                <div class="p-3 bg-light rounded-4 border">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <strong class="text-dark">{{ r.user.first_name|default:r.user.username }}</strong>
+                        <span class="badge bg-warning text-dark fw-bold">{{ r.rating }} ★</span>
+                    </div>
+                    <p class="small text-muted mb-0">{{ r.comment }}</p>
+                    <small class="text-secondary opacity-75 d-block mt-1">{{ r.created_at|date:"M d, Y" }}</small>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-5 text-muted">
+                <i class="fa-solid fa-star-half-stroke fs-1 mb-2 text-secondary"></i>
+                <p class="mb-0">No patient reviews submitted yet.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

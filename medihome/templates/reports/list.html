@@ -1,0 +1,68 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Electronic Medical Reports - MediHome{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h2 style="font-size: 1.75rem; color: var(--dark);">Electronic Medical Reports</h2>
+        <p style="color: var(--text-secondary);">Access, download PDF, or request physical hard copy report deliveries.</p>
+    </div>
+</div>
+
+<div class="glass-card">
+    <div class="table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Report Title</th>
+                    <th>Type</th>
+                    <th>Patient</th>
+                    <th>Laboratory</th>
+                    <th>Date Uploaded</th>
+                    <th>Hard Copy Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in reports %}
+                <tr>
+                    <td>
+                        <strong style="color: var(--dark);">{{ report.report_title }}</strong>
+                        {% if report.summary_notes %}
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">{{ report.summary_notes|truncatechars:40 }}</div>
+                        {% endif %}
+                    </td>
+                    <td><span class="badge badge-info">{{ report.get_report_type_display }}</span></td>
+                    <td>{{ report.patient.username }}</td>
+                    <td>{{ report.diagnostician.lab_name|default:"Partner Lab" }}</td>
+                    <td>{{ report.created_at|date:"M d, Y" }}</td>
+                    <td>
+                        {% if report.is_hard_copy_requested %}
+                            <span class="badge badge-success">Printed Copy Requested</span>
+                        {% else %}
+                            <a href="{% url 'reports:request_hard_copy' report.id %}" class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">
+                                Request Hard Copy
+                            </a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <a href="{% url 'reports:download_report' report.id %}" class="btn btn-primary" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;">
+                                📥 Download PDF
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+                        No medical reports available yet. Reports will appear once uploaded by diagnostic laboratories.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

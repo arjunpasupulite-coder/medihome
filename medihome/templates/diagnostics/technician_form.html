@@ -1,0 +1,42 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}{{ title }} - MediHome{% endblock %}
+
+{% block dashboard_content %}
+<div style="max-width: 550px; margin: 2rem auto;">
+    <div class="glass-card">
+        <h2 style="font-size: 1.5rem; color: var(--dark); margin-bottom: 1.5rem;">{{ title }}</h2>
+
+        <form method="POST" action="." class="needs-validation">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label class="form-label">Technician Name *</label>
+                {{ form.name }}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Contact Phone Number *</label>
+                {{ form.phone }}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Assigned Coverage Zone / Area *</label>
+                {{ form.area }}
+            </div>
+
+            <div style="margin: 1.25rem 0;">
+                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                    {{ form.is_available }}
+                    <span style="font-size: 0.9rem; font-weight: 600;">Currently Available for Sample Pickup</span>
+                </label>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                <button type="submit" class="btn btn-primary" style="flex: 1;">Save Technician</button>
+                <a href="{% url 'diagnostics:technician_list' %}" class="btn btn-outline">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

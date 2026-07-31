@@ -1,0 +1,39 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}User Management - Admin Console - MediHome{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h2 style="font-size: 1.75rem; color: var(--dark);">User Management</h2>
+        <p style="color: var(--text-secondary);">View registered patients, diagnosticians, hospitals, and administrator accounts.</p>
+    </div>
+</div>
+
+<div class="glass-card">
+    <div class="table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Phone</th>
+                    <th>Joined Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users_list %}
+                <tr>
+                    <td><strong>{{ u.username }}</strong></td>
+                    <td>{{ u.email }}</td>
+                    <td><span class="badge badge-info">{{ u.get_role_display }}</span></td>
+                    <td>{{ u.phone_number|default:"N/A" }}</td>
+                    <td>{{ u.created_at|date:"M d, Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

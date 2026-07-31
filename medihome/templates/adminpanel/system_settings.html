@@ -1,0 +1,49 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Manage Dynamic System Settings - MediHome{% endblock %}
+
+{% block dashboard_content %}
+<div style="max-width: 600px; margin: 2rem auto;">
+    <div class="glass-card">
+        <h2 style="font-size: 1.5rem; color: var(--dark); margin-bottom: 0.5rem;">Dynamic System Settings</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.9rem;">
+            Update financial fee structures and support details. Changes apply dynamically across the application without hardcoded logic.
+        </p>
+
+        <form method="POST" action="." class="needs-validation">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label class="form-label">GST Rate Percentage (%) *</label>
+                <input type="number" step="0.01" name="gst_percentage" class="form-control" value="{{ settings_obj.gst_percentage }}" required>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">Fixed Platform Fee (₹) *</label>
+                    <input type="number" step="0.01" name="platform_fee" class="form-control" value="{{ settings_obj.platform_fee }}" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Home Collection Charge (₹) *</label>
+                    <input type="number" step="0.01" name="home_collection_charge" class="form-control" value="{{ settings_obj.home_collection_charge }}" required>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">Support Email *</label>
+                    <input type="email" name="support_email" class="form-control" value="{{ settings_obj.support_email }}" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Support Helpline Phone *</label>
+                    <input type="text" name="support_phone" class="form-control" value="{{ settings_obj.support_phone }}" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                Save System Settings Changes
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,81 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MediHome - Smart Home Diagnostic & Digital Health Record System{% endblock %}</title>
+    <meta name="description" content="Book Diagnostic Tests, Hospital Appointments, and Access Digital Health Records - All in One Platform.">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/components.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Shared Top Navigation Header -->
+    <header class="navbar">
+        <a href="{% url 'landing' %}" class="brand-logo">
+            <svg viewBox="0 0 24 24">
+                <path d="M19 3H5c-1.1 0-1.99.9-1.99 2L3 19c0 1.1.89 2 1.99 2H19c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 11h-4v4h-4v-4H6v-4h4V6h4v4h4v4z"/>
+            </svg>
+            <span>MediHome</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="{% url 'landing' %}" class="nav-link">Home</a></li>
+            {% if user.is_authenticated %}
+                <li><a href="{% url 'patients:dashboard' %}" class="nav-link">Patient Portal</a></li>
+                <li><a href="{% url 'accounts:profile' %}" class="nav-link">Profile</a></li>
+                <li><a href="{% url 'accounts:logout' %}" class="btn btn-outline" style="padding: 0.4rem 1rem;">Logout</a></li>
+            {% else %}
+                <li><a href="{% url 'accounts:login_patient' %}" class="nav-link">Patient Portal</a></li>
+                <li><a href="{% url 'accounts:login_patient' %}" class="nav-link">Profile</a></li>
+                <li><a href="{% url 'accounts:login_patient' %}" class="btn btn-outline" style="padding: 0.4rem 1rem;">Logout</a></li>
+            {% endif %}
+        </ul>
+    </header>
+
+    <!-- Global Flash Messages -->
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            <span>{{ message }}</span>
+            <button class="close-btn" onclick="this.parentElement.remove();">&times;</button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Main Body Content -->
+    <main style="flex: 1;">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="footer">
+        <div class="footer-grid">
+            <div>
+                <h3 style="color: var(--white); margin-bottom: 0.75rem;">MediHome</h3>
+                <p>Smart Home Diagnostic & Digital Health Record System. Empowering home diagnostics and seamless healthcare management.</p>
+            </div>
+            <div>
+                <h4 style="color: var(--white); margin-bottom: 0.75rem;">Quick Portals</h4>
+                <p><a href="{% url 'accounts:login_patient' %}" style="color: #94a3b8;">Patient Login</a></p>
+                <p><a href="{% url 'accounts:login_diagnostician' %}" style="color: #94a3b8;">Diagnostician Portal</a></p>
+                <p><a href="{% url 'accounts:login_hospital' %}" style="color: #94a3b8;">Hospital Desk</a></p>
+            </div>
+            <div>
+                <h4 style="color: var(--white); margin-bottom: 0.75rem;">Contact Support</h4>
+                <p>Email: support@medihome.com</p>
+                <p>Phone: +91 1800-123-4567</p>
+                <p>24/7 Home Sample Collection Support</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 MediHome Health Systems. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

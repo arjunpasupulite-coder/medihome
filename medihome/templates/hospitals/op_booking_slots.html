@@ -1,0 +1,90 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Select Time Slot - Dr. {{ doctor.name }} - MediHome{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h2 style="font-size: 1.75rem; color: var(--dark);">Select Appointment Time Slot - Step 4 of 4</h2>
+        <p style="color: var(--text-secondary);">Dr. {{ doctor.name }} ({{ doctor.specialization }}) | Fee: ₹{{ doctor.consultation_fee }}</p>
+    </div>
+    <a href="{% url 'hospitals:op_booking_doctors' doctor.department.id %}" class="btn btn-outline">← Back to Doctors</a>
+</div>
+
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+    <!-- Slot Selection Form -->
+    <div class="glass-card">
+        <h3 style="font-size: 1.1rem; color: var(--dark); margin-bottom: 1rem;">1. Select Date</h3>
+        
+        <form method="GET" action="." style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+            <input type="date" name="date" class="form-control" style="max-width: 250px;" value="{{ target_date|date:'Y-m-d' }}" required min="{{ target_date|date:'Y-m-d' }}">
+            <button type="submit" class="btn btn-outline">Update Date</button>
+        </form>
+
+        <h3 style="font-size: 1.1rem; color: var(--dark); margin-bottom: 0.5rem;">2. Available 30-Minute Time Slots for {{ target_date|date:"M d, Y" }}</h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+            ℹ️ Booked time slots are automatically filtered to prevent double booking.
+        </p>
+
+        <form method="POST" action="{% url 'hospitals:op_booking_confirm' doctor.id %}" class="needs-validation">
+            {% csrf_token %}
+            <input type="hidden" name="appointment_date" value="{{ target_date|date:'Y-m-d' }}">
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 0.75rem; margin-bottom: 1.5rem;">
+                {% for slot in available_slots %}
+                <label style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0.75rem; border: 2px solid var(--primary); border-radius: var(--radius-sm); background: var(--white); cursor: pointer; text-align: center;">
+                    <input type="radio" name="appointment_time" value="{{ slot }}" required style="margin-bottom: 0.25rem;">
+                    <span style="font-weight: 700; color: var(--dark); font-size: 0.9rem;">{{ slot }}</span>
+                </label>
+                {% empty %}
+                <div style="grid-column: 1 / -1; background: #fee2e2; color: #b91c1c; padding: 1rem; border-radius: var(--radius-sm); text-align: center; font-size: 0.9rem;">
+                    No available time slots remaining for Dr. {{ doctor.name }} on {{ target_date|date:"M d, Y" }}. Please choose another date.
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if booked_slots %}
+            <div style="margin-bottom: 1.5rem; font-size: 0.8rem; color: var(--text-muted);">
+                <strong>Unavailable / Already Booked Slots:</strong>
+                {% for bslot in booked_slots %}
+                    <span style="text-decoration: line-through; margin-right: 0.5rem;">{{ bslot }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="form-group">
+                <label class="form-label">Symptom Reason / Health Issue *</label>
+                <textarea name="symptom_reason" class="form-control" rows="2" required placeholder="Describe symptoms or reason for OP consultation..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Payment Method *</label>
+                <select name="payment_method" class="form-control" required>
+                    <option value="UPI">UPI Payment</option>
+                    <option value="CREDIT_CARD">Credit Card</option>
+                    <option value="DEBIT_CARD">Debit Card</option>
+                    <option value="NET_BANKING">Net Banking</option>
+                </select>
+            </div>
+
+            {% if available_slots %}
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.85rem; font-size: 1.05rem;">
+                Confirm OP Appointment & Pay ₹{{ doctor.consultation_fee }}
+            </button>
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- Doctor Info Card -->
+    <div>
+        <div class="glass-card">
+            <h3 style="font-size: 1.1rem; color: var(--dark); margin-bottom: 1rem;">Doctor Profile Summary</h3>
+            <p><strong>Doctor:</strong> Dr. {{ doctor.name }}</p>
+            <p><strong>Qualification:</strong> {{ doctor.qualification }}</p>
+            <p><strong>Department:</strong> {{ doctor.department.name }}</p>
+            <p><strong>Hospital:</strong> {{ doctor.hospital.hospital_name }}</p>
+            <p><strong>Fee:</strong> ₹{{ doctor.consultation_fee }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

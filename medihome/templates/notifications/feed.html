@@ -1,0 +1,39 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Notifications Feed - MediHome{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h2 style="font-size: 1.75rem; color: var(--dark);">Notifications & System Alerts</h2>
+        <p style="color: var(--text-secondary);">Real-time status notifications, appointment alerts, and report updates.</p>
+    </div>
+    {% if notifications %}
+    <form method="POST" action=".">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline">Mark All as Read</button>
+    </form>
+    {% endif %}
+</div>
+
+<div class="glass-card">
+    <div style="display: flex; flex-direction: column; gap: 1rem;">
+        {% for n in notifications %}
+        <div style="background: var(--white); border: 1px solid var(--border); padding: 1rem 1.25rem; border-radius: var(--radius-md); border-left: 4px solid {% if n.is_read %}var(--border){% else %}var(--primary){% endif %};">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                <h4 style="font-size: 1.05rem; color: var(--dark); font-weight: 700;">{{ n.title }}</h4>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">{{ n.created_at|date:"M d, Y H:i" }}</span>
+            </div>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem;">{{ n.message }}</p>
+            {% if n.link %}
+                <a href="{{ n.link }}" style="font-size: 0.85rem; font-weight: 600; color: var(--primary);">View Related Details →</a>
+            {% endif %}
+        </div>
+        {% empty %}
+        <div style="text-align: center; padding: 3rem; color: var(--text-muted);">
+            No notifications available.
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

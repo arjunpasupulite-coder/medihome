@@ -1,0 +1,49 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Hospital Approvals - Admin Console - MediHome{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h2 style="font-size: 1.75rem; color: var(--dark);">Hospital OPD Desk Approvals</h2>
+        <p style="color: var(--text-secondary);">Review hospital licenses, emergency contact lines, and toggle approval status.</p>
+    </div>
+</div>
+
+<div class="glass-card">
+    <div class="table-container">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>Hospital Name</th>
+                    <th>License Number</th>
+                    <th>Emergency Contact</th>
+                    <th>Approval Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for h in hospitals_list %}
+                <tr>
+                    <td><strong>🏥 {{ h.hospital_name }}</strong></td>
+                    <td>{{ h.license_number }}</td>
+                    <td>{{ h.emergency_contact }}</td>
+                    <td>
+                        {% if h.is_approved_by_admin %}
+                            <span class="badge badge-success">Approved</span>
+                        {% else %}
+                            <span class="badge badge-warning">Pending Approval</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'adminpanel:toggle_hospital_approval' h.id %}" class="btn btn-outline" style="padding: 0.35rem 0.65rem; font-size: 0.8rem;">
+                            {% if h.is_approved_by_admin %}Revoke Approval{% else %}Approve Hospital{% endif %}
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

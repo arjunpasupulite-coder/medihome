@@ -1,0 +1,36 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Diagnostician Lab Dashboard - MediHome{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h2 style="font-size: 1.75rem; color: var(--dark);">Diagnostician Portal</h2>
+        <p style="color: var(--text-secondary);">Manage diagnostic tests, home sample collection technicians, and patient reports.</p>
+    </div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">🧪</div>
+        <div class="stat-info">
+            <h4>Available Tests</h4>
+            <div class="value">0</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">📦</div>
+        <div class="stat-info">
+            <h4>Lab Bookings</h4>
+            <div class="value">0</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">🚴</div>
+        <div class="stat-info">
+            <h4>Technicians</h4>
+            <div class="value">0</div>
+        </div>
+    </div>
+</div>
+{% endblock %}

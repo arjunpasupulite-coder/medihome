@@ -1,0 +1,113 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}My Profile - MediHome{% endblock %}
+
+{% block dashboard_content %}
+<div class="dashboard-header">
+    <div>
+        <h2 style="font-size: 1.75rem; color: var(--dark);">User Profile</h2>
+        <p style="color: var(--text-secondary);">View and update your personal details and location coordinates.</p>
+    </div>
+    <a href="{% url 'accounts:change_password' %}" class="btn btn-outline">Change Password</a>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem;">
+    <!-- Left Overview Card -->
+    <div class="glass-card" style="text-align: center;">
+        <div style="width: 90px; height: 90px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto 1rem; font-weight: bold;">
+            {% if user.profile_picture %}
+                <img src="{{ user.profile_picture.url }}" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+            {% else %}
+                {{ user.username|slice:":1"|upper }}
+            {% endif %}
+        </div>
+        <h3 style="font-size: 1.25rem; color: var(--dark);">{{ user.get_full_name|default:user.username }}</h3>
+        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">{{ user.email }}</p>
+        <span class="badge badge-info">{{ user.get_role_display }}</span>
+
+        {% if user.is_diagnostician and user.diagnostician_profile %}
+            <hr style="margin: 1.25rem 0; border: none; border-top: 1px solid var(--border);">
+            <div style="text-align: left; font-size: 0.9rem;">
+                <p><strong>Lab Name:</strong> {{ user.diagnostician_profile.lab_name }}</p>
+                <p><strong>Owner:</strong> {{ user.diagnostician_profile.owner_name }}</p>
+                <p><strong>License:</strong> {{ user.diagnostician_profile.license_number }}</p>
+                <p><strong>Status:</strong> 
+                    {% if user.diagnostician_profile.is_approved_by_admin %}
+                        <span class="badge badge-success">Approved</span>
+                    {% else %}
+                        <span class="badge badge-warning">Pending Approval</span>
+                    {% endif %}
+                </p>
+            </div>
+        {% elif user.is_hospital and user.hospital_profile %}
+            <hr style="margin: 1.25rem 0; border: none; border-top: 1px solid var(--border);">
+            <div style="text-align: left; font-size: 0.9rem;">
+                <p><strong>Hospital Name:</strong> {{ user.hospital_profile.hospital_name }}</p>
+                <p><strong>Emergency:</strong> {{ user.hospital_profile.emergency_contact }}</p>
+                <p><strong>License:</strong> {{ user.hospital_profile.license_number }}</p>
+                <p><strong>Status:</strong> 
+                    {% if user.hospital_profile.is_approved_by_admin %}
+                        <span class="badge badge-success">Approved</span>
+                    {% else %}
+                        <span class="badge badge-warning">Pending Approval</span>
+                    {% endif %}
+                </p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Right Edit Profile Form -->
+    <div class="glass-card">
+        <h3 style="font-size: 1.2rem; color: var(--dark); margin-bottom: 1rem;">Update Profile Information</h3>
+
+        <form method="POST" enctype="multipart/form-data" action=".">
+            {% csrf_token %}
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">First Name</label>
+                    {{ form.first_name }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Last Name</label>
+                    {{ form.last_name }}
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    {{ form.email }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    {{ form.phone_number }}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Address</label>
+                {{ form.address }}
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label class="form-label">Latitude</label>
+                    {{ form.latitude }}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Longitude</label>
+                    {{ form.longitude }}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Profile Picture</label>
+                {{ form.profile_picture }}
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">Save Profile Changes</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

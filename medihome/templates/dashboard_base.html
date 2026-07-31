@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <!-- Role-based Dynamic Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-title">MediHome Workspace</div>
+        
+        {% if user.is_patient %}
+            <a href="{% url 'patients:dashboard' %}" class="sidebar-item active">Dashboard</a>
+            <a href="{% url 'patients:diagnostic_search' %}" class="sidebar-item">Book Diagnostic Test</a>
+            <a href="{% url 'hospitals:op_booking' %}" class="sidebar-item">Hospital OP Booking</a>
+            <a href="{% url 'patients:booking_history' %}" class="sidebar-item">My Diagnostic Bookings</a>
+            <a href="{% url 'hospitals:appointment_list' %}" class="sidebar-item">My OP Appointments</a>
+            <a href="{% url 'patients:cart' %}" class="sidebar-item">Cart</a>
+            <a href="{% url 'patients:medicine_reminders' %}" class="sidebar-item">Medicine Reminders</a>
+            <a href="{% url 'reports:list' %}" class="sidebar-item">Electronic Reports</a>
+            <a href="{% url 'telemedicine:room' %}" class="sidebar-item">Telemedicine Room</a>
+            <a href="{% url 'payments:history' %}" class="sidebar-item">Payment Records</a>
+            <a href="{% url 'notifications:feed' %}" class="sidebar-item">Notifications</a>
+            <a href="{% url 'accounts:profile' %}" class="sidebar-item">My Profile</a>
+        {% elif user.is_diagnostician %}
+            <a href="{% url 'diagnostics:dashboard' %}" class="sidebar-item active">Lab Dashboard</a>
+            <a href="{% url 'diagnostics:booking_list' %}" class="sidebar-item">Lab Bookings</a>
+            <a href="{% url 'diagnostics:test_list' %}" class="sidebar-item">Manage Lab Tests</a>
+            <a href="{% url 'diagnostics:technician_list' %}" class="sidebar-item">Manage Technicians</a>
+            <a href="{% url 'diagnostics:revenue' %}" class="sidebar-item">Revenue Analytics</a>
+            <a href="{% url 'reports:list' %}" class="sidebar-item">Report Manager</a>
+            <a href="{% url 'notifications:feed' %}" class="sidebar-item">Alerts Feed</a>
+            <a href="{% url 'accounts:profile' %}" class="sidebar-item">Lab Profile</a>
+        {% elif user.is_hospital %}
+            <a href="{% url 'hospitals:dashboard' %}" class="sidebar-item active">Hospital OPD Desk</a>
+            <a href="{% url 'hospitals:appointment_list' %}" class="sidebar-item">OP Appointments</a>
+            <a href="{% url 'hospitals:department_list' %}" class="sidebar-item">Manage Departments</a>
+            <a href="{% url 'hospitals:doctor_list' %}" class="sidebar-item">Manage Doctors</a>
+            <a href="{% url 'hospitals:revenue' %}" class="sidebar-item">OPD Revenue</a>
+            <a href="{% url 'notifications:feed' %}" class="sidebar-item">Notifications</a>
+            <a href="{% url 'accounts:profile' %}" class="sidebar-item">Hospital Profile</a>
+        {% elif user.is_admin_role %}
+            <a href="{% url 'adminpanel:dashboard' %}" class="sidebar-item active">Admin Overview</a>
+            <a href="{% url 'adminpanel:manage_users' %}" class="sidebar-item">Manage Users</a>
+            <a href="{% url 'adminpanel:manage_labs' %}" class="sidebar-item">Lab Approvals</a>
+            <a href="{% url 'adminpanel:manage_hospitals' %}" class="sidebar-item">Hospital Approvals</a>
+            <a href="{% url 'adminpanel:manage_system_settings' %}" class="sidebar-item">System Settings</a>
+            <a href="{% url 'adminpanel:manage_symptom_mappings' %}" class="sidebar-item">Symptom Mappings</a>
+            <a href="{% url 'accounts:profile' %}" class="sidebar-item">Admin Profile</a>
+        {% endif %}
+
+        <div style="margin-top: auto; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
+            <a href="{% url 'accounts:logout' %}" class="sidebar-item" style="color: #f87171;">Logout Account</a>
+        </div>
+    </aside>
+
+    <!-- Main Dashboard Area -->
+    <section class="dashboard-main">
+        {% block dashboard_content %}{% endblock %}
+    </section>
+</div>
+{% endblock %}
